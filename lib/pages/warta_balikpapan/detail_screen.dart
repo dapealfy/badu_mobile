@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tabler_icons/tabler_icons.dart';
 
 class DetailWartaBalikpapan extends StatefulWidget {
-  const DetailWartaBalikpapan({Key? key}) : super(key: key);
+  final image;
+  final description;
+  const DetailWartaBalikpapan({Key? key, this.image, this.description})
+      : super(key: key);
 
   @override
   _DetailWartaBalikpapanState createState() => _DetailWartaBalikpapanState();
@@ -49,10 +52,14 @@ class _DetailWartaBalikpapanState extends State<DetailWartaBalikpapan> {
                     child: Column(
                       children: [
                         Container(
-                          height: 200,
+                          width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                             color: Colors.grey.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(10),
                           ),
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(widget.image)),
                         ),
                         Container(
                           margin: EdgeInsets.symmetric(
@@ -66,18 +73,21 @@ class _DetailWartaBalikpapanState extends State<DetailWartaBalikpapan> {
                                   shape: BoxShape.circle,
                                   color: Colors.grey.withOpacity(0.7),
                                 ),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(100),
+                                    child: Image.network(
+                                        'https://scontent-cgk1-1.cdninstagram.com/v/t51.2885-19/s150x150/257717259_2708907252737830_4304582086925372761_n.jpg?_nc_ht=scontent-cgk1-1.cdninstagram.com&_nc_cat=110&_nc_ohc=PrPUp4h8xsIAX8awJEh&edm=ABfd0MgBAAAA&ccb=7-4&oh=00_AT-WnQIQM2uUGYNEipwj5mfXiHl-c60fuur8pK1Q-8AGVg&oe=62060492&_nc_sid=7bff83')),
                               ),
                               SizedBox(
                                 width: 10,
                               ),
-                              Text('Balikpapanku'),
+                              Text('Pemkot Balikpapan'),
                             ],
                           ),
                         ),
                         Container(
                           margin: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                              'Macet parah di sekitaran daerah simpang 3 kariangau (depan hotel platinum) hingga simpang 3 pasar butun. Macet parah di sekitaran daerah simpang 3 kariangau (depan hotel platinum) hingga simpang 3 pasar butun. Macet parah di sekitaran daerah simpang 3 kariangau (depan hotel platinum) hingga simpang 3 pasar butun. Macet parah di sekitaran daerah simpang 3 kariangau (depan hotel platinum) hingga simpang 3 pasar butun. '),
+                          child: Text(widget.description),
                         ),
                         SizedBox(height: 10),
                       ],

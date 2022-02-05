@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:badu/pages/aduan_balikpapan/home_screen.dart';
 import 'package:badu/pages/fasilitas_balikpapan/home_screen.dart';
 import 'package:badu/pages/pantau_balikpapan/home_screen.dart';
@@ -8,6 +10,8 @@ import 'package:badu/pages/wifi_balikpapan/home_screen.dart';
 import 'package:badu/settings/color.dart';
 import 'package:flutter/material.dart';
 import 'package:tabler_icons/tabler_icons.dart';
+import 'package:badu/settings/global_variable.dart' as setting;
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,6 +21,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+// ............
+  // Warba
+  // ............
+  List warba = [];
+  void _dataWarba() async {
+    Uri url = Uri.parse("https://www.instagram.com/pemkot_balikpapan/?__a=1");
+    final response = await http.get(url, headers: {
+      'Accept': 'application/json',
+    });
+    Map<String, dynamic> _warba;
+
+    _warba = json.decode(response.body);
+    setState(() {
+      warba =
+          _warba['graphql']['user']['edge_owner_to_timeline_media']['edges'];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _dataWarba();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -453,14 +481,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: 4,
+                    itemCount: warba.length == 0 ? 0 : 8,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DetailWartaBalikpapan(),
+                              builder: (context) => DetailWartaBalikpapan(
+                                image: warba[index]['node']['display_url'],
+                                description: warba[index]['node']
+                                        ['edge_media_to_caption']['edges'][0]
+                                    ['node']['text'],
+                              ),
                             ),
                           );
                         },
@@ -484,11 +517,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Column(
                             children: [
                               Container(
-                                height: 200,
+                                width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                   color: Colors.grey.withOpacity(0.7),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.network(
+                                        warba[index]['node']['display_url'])),
                               ),
                               Container(
                                 margin: EdgeInsets.symmetric(
@@ -502,25 +539,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                         shape: BoxShape.circle,
                                         color: Colors.grey.withOpacity(0.7),
                                       ),
+                                      child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(100),
+                                          child: Image.network(
+                                              'https://scontent-cgk1-1.cdninstagram.com/v/t51.2885-19/s150x150/257717259_2708907252737830_4304582086925372761_n.jpg?_nc_ht=scontent-cgk1-1.cdninstagram.com&_nc_cat=110&_nc_ohc=PrPUp4h8xsIAX8awJEh&edm=ABfd0MgBAAAA&ccb=7-4&oh=00_AT-WnQIQM2uUGYNEipwj5mfXiHl-c60fuur8pK1Q-8AGVg&oe=62060492&_nc_sid=7bff83')),
                                     ),
                                     SizedBox(
                                       width: 10,
                                     ),
-                                    Text('Balikpapanku'),
+                                    Text('Pemkot Balikpapan'),
                                   ],
                                 ),
                               ),
                               Container(
                                 margin: EdgeInsets.symmetric(horizontal: 20),
                                 child: Text(
-                                    'Macet parah di sekitaran daerah simpang 3 kariangau (depan hotel platinum) hingga simpang 3 pasar butun.'),
+                                  warba[index]['node']['edge_media_to_caption']
+                                      ['edges'][0]['node']['text'],
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 4,
+                                ),
                               ),
-                              SizedBox(height: 10),
+                              SizedBox(height: 20),
                             ],
                           ),
                         ),
                       );
-                    })
+                    }),
+                SizedBox(height: 30),
               ],
             ),
           ),
