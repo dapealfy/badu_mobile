@@ -104,6 +104,7 @@ class _TambahIncidentState extends State<TambahIncident> {
                     }
                     setState(() {
                       this.uploadPath.add(filePath.files.single);
+                      Navigator.pop(context);
                     });
                   } on PlatformException catch (e) {
                     print("Error while picking the file: " + e.toString());

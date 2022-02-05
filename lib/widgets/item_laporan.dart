@@ -24,7 +24,7 @@ class ItemLaporan extends StatelessWidget {
   Widget build(BuildContext context) {
     Color status_color = Colors.red;
 
-    if (status == 'validasi') {
+    if (status == 'diselidiki') {
       status_color = Colors.blueGrey;
     } else if (status == 'ditolak') {
       status_color = Colors.red;

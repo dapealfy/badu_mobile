@@ -64,19 +64,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           color: Colors.white, size: 30)),
                                 ),
                                 SizedBox(
-                                  width: 20,
+                                  width: 15,
                                 ),
                                 Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text('Muhammad Rafly Raihan',
+                                      Text('Daffa Alvi Reri',
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
                                           )),
-                                      Text('NIK: -',
+                                      SizedBox(height: 5),
+                                      Text('NIK: 6372022701010002',
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,

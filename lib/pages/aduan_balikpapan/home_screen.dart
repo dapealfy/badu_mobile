@@ -89,6 +89,21 @@ class _AduanBalikpapanState extends State<AduanBalikpapan> {
                     ),
                     child: TextField(
                       controller: controllerSearch,
+                      onChanged: (text) {
+                        search = [];
+                        report.forEach((element) {
+                          if (element['title']
+                              .toString()
+                              .toLowerCase()
+                              .contains(text)) {
+                            setState(() {
+                              if (!search.contains(element)) {
+                                search.add(element);
+                              }
+                            });
+                          }
+                        });
+                      },
                       decoration: const InputDecoration(
                           border: InputBorder.none,
                           prefixIcon: Icon(TablerIcons.search),
@@ -99,34 +114,67 @@ class _AduanBalikpapanState extends State<AduanBalikpapan> {
                   Expanded(
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 8),
-                      child: GridView.builder(
-                        itemCount: report.length,
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 2 / 3,
-                        ),
-                        itemBuilder: (context, index) {
-                          var _waktu = replaceCharAt(
-                              report[index]['created_at'], 10, " ");
-                          var waktu =
-                              DateTime.parse(replaceCharAt(_waktu, 26, ""))
-                                  .add(Duration(hours: 8));
-                          var waktu_pemesanan =
-                              DateFormat('d MMM yyyy, HH:mm').format(waktu);
-                          return ItemLaporan(
-                              thumbnail: report[index]['image'],
-                              status: report[index]['status'],
-                              nomor_laporan:
-                                  'IMS' + report[index]['id'].toString(),
-                              title: report[index]['title'],
-                              nama_user: report[index]['user']['fullname'],
-                              tanggal_masuk: waktu_pemesanan,
-                              data: report[index]);
-                        },
-                      ),
+                      child: search.length == 0
+                          ? GridView.builder(
+                              itemCount: report.length,
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 2 / 3,
+                              ),
+                              itemBuilder: (context, index) {
+                                var _waktu = replaceCharAt(
+                                    report[index]['created_at'], 10, " ");
+                                var waktu = DateTime.parse(
+                                        replaceCharAt(_waktu, 26, ""))
+                                    .add(Duration(hours: 8));
+                                var waktu_pemesanan =
+                                    DateFormat('d MMM yyyy, HH:mm')
+                                        .format(waktu);
+                                return ItemLaporan(
+                                    thumbnail: report[index]['image'],
+                                    status: report[index]['status'],
+                                    nomor_laporan:
+                                        'IMS' + report[index]['id'].toString(),
+                                    title: report[index]['title'],
+                                    nama_user: report[index]['user']
+                                        ['fullname'],
+                                    tanggal_masuk: waktu_pemesanan,
+                                    data: report[index]);
+                              },
+                            )
+                          : GridView.builder(
+                              itemCount: search.length,
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 2 / 3,
+                              ),
+                              itemBuilder: (context, index) {
+                                var _waktu = replaceCharAt(
+                                    search[index]['created_at'], 10, " ");
+                                var waktu = DateTime.parse(
+                                        replaceCharAt(_waktu, 26, ""))
+                                    .add(Duration(hours: 8));
+                                var waktu_pemesanan =
+                                    DateFormat('d MMM yyyy, HH:mm')
+                                        .format(waktu);
+                                return ItemLaporan(
+                                    thumbnail: search[index]['image'],
+                                    status: search[index]['status'],
+                                    nomor_laporan:
+                                        'IMS' + search[index]['id'].toString(),
+                                    title: search[index]['title'],
+                                    nama_user: search[index]['user']
+                                        ['fullname'],
+                                    tanggal_masuk: waktu_pemesanan,
+                                    data: search[index]);
+                              },
+                            ),
                     ),
                   ),
                 ],
@@ -137,4 +185,6 @@ class _AduanBalikpapanState extends State<AduanBalikpapan> {
       ),
     );
   }
+
+  List search = [];
 }
