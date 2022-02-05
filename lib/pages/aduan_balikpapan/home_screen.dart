@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:badu/pages/aduan_balikpapan/detail_incident.dart';
+import 'package:badu/settings/string.dart';
 import 'package:badu/widgets/item_laporan.dart';
 import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabler_icons/tabler_icons.dart';
-// import 'package:incidentmonitoring_user/settings/global_variable.dart'
-//     as setting;
-// import 'package:http/http.dart' as http;
+import 'package:badu/settings/global_variable.dart' as setting;
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class AduanBalikpapan extends StatefulWidget {
   const AduanBalikpapan({Key? key}) : super(key: key);
@@ -19,61 +20,30 @@ class AduanBalikpapan extends StatefulWidget {
 class _AduanBalikpapanState extends State<AduanBalikpapan> {
   TextEditingController controllerSearch = TextEditingController();
 
-  //............
+  // ............
   // Report
-  //............
-  // List report = [];
-  // void _dataReport() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   Uri url = Uri.parse(setting.url_api + "api/report");
-  //   final response = await http.get(url, headers: {
-  //     'Accept': 'application/json',
-  //     'Authorization': 'Bearer ' + prefs.getString('token').toString()
-  //   });
-  //   Map<String, dynamic> _report;
+  // ............
+  List report = [];
+  void _dataReport() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    Uri url = Uri.parse(setting.url_api + "api/complaints");
+    final response = await http.get(url, headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + prefs.getString('token').toString()
+    });
+    Map<String, dynamic> _report;
 
-  //   _report = json.decode(response.body);
-  //   setState(() {
-  //     report = _report['reports'];
-  //   });
-  // }
+    _report = json.decode(response.body);
+    setState(() {
+      report = _report['complaint'];
+    });
+  }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _dataReport();
-  // }
-
-  var data = {
-    "id": 3,
-    "user_id": 3,
-    "date": "2021-12-27",
-    "status": "validasi",
-    "category": null,
-    "title": "Laporan A",
-    "description": "Deskripsi Laporan A",
-    "location": "Lokasi ABCDEFGHIJKLMN",
-    "document":
-        "https://awsimages.detik.net.id/community/media/visual/2022/01/21/sopir-truk-tronton-balikpapan-tersangka-ini-fakta-terbaru-kecelakaan-maut_169.png?w=700&q=90",
-    "lat": 0,
-    "lng": 0,
-    "created_at": "2021-12-27T07:42:57.000000Z",
-    "updated_at": "2021-12-27T07:42:57.000000Z",
-    "user": {
-      "id": 3,
-      "role": "petugas",
-      "name": "PETUGAS (Edit)",
-      "phone_number": "085656565656",
-      "email": "petugas@gmail.com",
-      "avatar":
-          "http://ims.weirdprojecttest.com/storage/avatar/sBgm8qZUTCrzhwn20DiwYDewXsNNEkqGZGatu7GC.jpg",
-      "fcm_token": null,
-      "lat": -1.2510130310316125,
-      "lng": 116.88780136706316,
-      "created_at": "2021-12-19T13:19:39.000000Z",
-      "updated_at": "2022-01-01T10:04:57.000000Z"
-    }
-  };
+  @override
+  void initState() {
+    super.initState();
+    _dataReport();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +100,7 @@ class _AduanBalikpapanState extends State<AduanBalikpapan> {
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 8),
                       child: GridView.builder(
-                        itemCount: 4,
+                        itemCount: report.length,
                         shrinkWrap: true,
                         physics: const BouncingScrollPhysics(),
                         gridDelegate:
@@ -139,15 +109,22 @@ class _AduanBalikpapanState extends State<AduanBalikpapan> {
                           childAspectRatio: 2 / 3,
                         ),
                         itemBuilder: (context, index) {
+                          var _waktu = replaceCharAt(
+                              report[index]['created_at'], 10, " ");
+                          var waktu =
+                              DateTime.parse(replaceCharAt(_waktu, 26, ""))
+                                  .add(Duration(hours: 8));
+                          var waktu_pemesanan =
+                              DateFormat('d MMM yyyy, HH:mm').format(waktu);
                           return ItemLaporan(
-                              thumbnail:
-                                  'https://awsimages.detik.net.id/community/media/visual/2022/01/21/sopir-truk-tronton-balikpapan-tersangka-ini-fakta-terbaru-kecelakaan-maut_169.png?w=700&q=90',
-                              status: 'diproses',
-                              nomor_laporan: 'IMS1927364',
-                              title: 'Kecelakaan Mobil',
-                              nama_user: 'Daffa Alvi',
-                              tanggal_masuk: '30 Januari 2022',
-                              data: data);
+                              thumbnail: report[index]['image'],
+                              status: report[index]['status'],
+                              nomor_laporan:
+                                  'IMS' + report[index]['id'].toString(),
+                              title: report[index]['title'],
+                              nama_user: report[index]['user']['fullname'],
+                              tanggal_masuk: waktu_pemesanan,
+                              data: report[index]);
                         },
                       ),
                     ),

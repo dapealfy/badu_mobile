@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabler_icons/tabler_icons.dart';
+import 'package:badu/settings/global_variable.dart' as setting;
+import 'package:http/http.dart' as http;
 
 class FasilitasBalikpapan extends StatefulWidget {
   const FasilitasBalikpapan({Key? key}) : super(key: key);
@@ -9,6 +14,31 @@ class FasilitasBalikpapan extends StatefulWidget {
 }
 
 class _FasilitasBalikpapanState extends State<FasilitasBalikpapan> {
+  // ............
+  // Report
+  // ............
+  List report = [];
+  void _dataReport() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    Uri url = Uri.parse(setting.url_api + "api/facilities");
+    final response = await http.get(url, headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + prefs.getString('token').toString()
+    });
+    Map<String, dynamic> _report;
+
+    _report = json.decode(response.body);
+    setState(() {
+      report = _report['facility'];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _dataReport();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

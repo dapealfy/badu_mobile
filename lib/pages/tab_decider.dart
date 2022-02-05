@@ -1,3 +1,4 @@
+import 'package:badu/pages/aduan_balikpapan/add_incident.dart';
 import 'package:badu/pages/tabs/activity_screen.dart';
 import 'package:badu/pages/tabs/home_screen.dart';
 import 'package:badu/pages/tabs/notification_screen.dart';
@@ -113,7 +114,14 @@ class _TabDeciderState extends State<TabDecider> {
                 left: MediaQuery.of(context).size.width * 0.38,
                 right: MediaQuery.of(context).size.width * 0.38,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TambahIncident(),
+                      ),
+                    );
+                  },
                   child: Container(
                     height: 70,
                     width: 70,

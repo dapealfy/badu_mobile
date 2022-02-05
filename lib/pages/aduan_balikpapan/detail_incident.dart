@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tabler_icons/tabler_icons.dart';
 
 class DetailIncident extends StatefulWidget {
@@ -12,27 +11,9 @@ class DetailIncident extends StatefulWidget {
 }
 
 class _DetailIncidentState extends State<DetailIncident> {
-  late GoogleMapController _controller;
-  static LatLng _kMapCenter = const LatLng(0, 0);
-
-  static CameraPosition _kInitialPosition = CameraPosition(target: _kMapCenter);
-
-  final List<Marker> _markers = <Marker>[];
-
-  updateLocationMap() {
-    setState(() {
-      _kMapCenter = LatLng(
-          double.parse(widget.detailIncident['lat'].toString()),
-          double.parse(widget.detailIncident['lng'].toString()));
-      _kInitialPosition =
-          CameraPosition(target: _kMapCenter, zoom: 15.0, tilt: 0, bearing: 0);
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    updateLocationMap();
   }
 
   @override
@@ -55,9 +36,9 @@ class _DetailIncidentState extends State<DetailIncident> {
                       height: 300,
                       child: ClipRRect(
                         child: Image.network(
-                          widget.detailIncident['document'] == '-'
+                          widget.detailIncident['image'] == '-'
                               ? 'https://martialartsplusinc.com/wp-content/uploads/2017/04/default-image-620x600.jpg'
-                              : widget.detailIncident['document'],
+                              : widget.detailIncident['image'],
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -78,7 +59,7 @@ class _DetailIncidentState extends State<DetailIncident> {
                           Text(
                             widget.detailIncident['title'] +
                                 '\n' +
-                                widget.detailIncident['description'],
+                                widget.detailIncident['complaint_description'],
                             style: TextStyle(
                               color: Colors.black.withOpacity(0.7),
                             ),
@@ -123,64 +104,17 @@ class _DetailIncidentState extends State<DetailIncident> {
                       'Nomor Laporan',
                       style: TextStyle(color: Colors.black.withOpacity(0.4)),
                     ),
-                    Text('ID' + widget.detailIncident['id'].toString()),
+                    Text('IMS' + widget.detailIncident['id'].toString()),
                     const SizedBox(height: 15),
                     Text(
                       'Tanggal Masuk',
                       style: TextStyle(color: Colors.black.withOpacity(0.4)),
                     ),
-                    Text(widget.detailIncident['date']),
-                    const SizedBox(height: 15),
-                    Text(
-                      'Kategori',
-                      style: TextStyle(color: Colors.black.withOpacity(0.4)),
-                    ),
-                    Text(widget.detailIncident['category'] ?? 'null')
+                    Text(widget.detailIncident['created_at']),
                   ],
                 ),
               ),
               const SizedBox(height: 10),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Detail Laporan',
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      height: 200,
-                      child: GoogleMap(
-                        initialCameraPosition: _kInitialPosition,
-                        markers: Set<Marker>.of(_markers),
-                        onMapCreated: (GoogleMapController controller) {
-                          setState(() {
-                            _markers.add(
-                              Marker(
-                                markerId: MarkerId('231'),
-                                position: LatLng(
-                                    double.parse(widget.detailIncident['lat']
-                                        .toString()),
-                                    double.parse(widget.detailIncident['lng']
-                                        .toString())),
-                                infoWindow: InfoWindow(
-                                    title: widget.detailIncident['title']),
-                              ),
-                            );
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
           Positioned(
